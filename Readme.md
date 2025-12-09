@@ -135,6 +135,7 @@ Bearer tuTokenAqui
 5. Ahora puedes usar todos los endpoints protegidos.
 
 📦 Estructura del Proyecto
+
 src/main/java/com/example/demo_spring/
  ├── auth/          → Controladores de login/register
  ├── config/        → Seguridad y excepciones globales
@@ -142,6 +143,7 @@ src/main/java/com/example/demo_spring/
  ├── model/         → Entidades JPA
  ├── repository/    → Interfaces JPA
  └── service/       → Lógica de negocio
+
 
 📝 Notas Importantes
 
