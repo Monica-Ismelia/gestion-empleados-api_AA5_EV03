@@ -1,180 +1,160 @@
-# 🚀 Sistema de Gestión de Empleados y Autenticación con JWT – Spring Boot
+🚀 API RESTful – Gestión de Empleados
 
-![Java](https://img.shields.io/badge/Java-17-blue)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3.5-brightgreen)
-![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange)
-![Maven](https://img.shields.io/badge/Maven-3.9.0-red)
-![JWT](https://img.shields.io/badge/JWT-Security-yellow)
+Este proyecto implementa una API RESTful para la Gestión de Empleados, desarrollada con Spring Boot, protegida con JSON Web Token (JWT) y documentada con OpenAPI/Swagger UI.
+Incluye manejo global de errores, validaciones, y CRUD completo.
 
 ---
+🛠️ Tecnologías Utilizadas
 
-## 📌 Descripción
+| Tecnología                  | Descripción                  |
+| --------------------------- | ---------------------------- |
+| **Java 17+**                | Lenguaje principal           |
+| **Spring Boot 3.x**         | Framework backend            |
+| **Spring Web**              | Creación de API REST         |
+| **Spring Security + JWT**   | Autenticación y autorización |
+| **Spring Data JPA**         | Persistencia                 |
+| **Hibernate**               | ORM                          |
+| **H2 / MySQL / PostgreSQL** | Bases de datos soportadas    |
+| **OpenAPI – Swagger UI**    | Documentación interactiva    |
 
+📦 Requisitos Previos
+Asegúrate de tener instalado:
 
-## 📂 Estructura del Proyecto
+* JDK 17 o superior
+* Maven 3.8+
+* Un IDE (IntelJ IDEA, VS Code, Eclipse)
 
-```
-src/
-├── auth/                → Controladores y servicios JWT
-│   ├── AuthController.java
-│   ├── AuthService.java
-│   └── JwtUtil.java
-├── config/              → Configuración de seguridad y JWT
-│   ├── SecurityConfig.java
-│   └── JwtAuthenticationFilter.java
-├── controller/          → Controladores de empleados
-│   └── EmpleadoController.java
-├── model/               → Entidades
-│   ├── Usuario.java
-│   └── Empleado.java
-├── repository/          → Repositorios JPA
-│   ├── UsuarioRepository.java
-│   └── EmpleadoRepository.java
-├── service/             → Lógica de negocio
-│   └── EmpleadoService.java
-├── dto/                 → Clases DTO (opcional)
-│   └── LoginRequest.java
-└── DemoSpringApplication.java
-```
+🔧 Instalación y Ejecución
+1️⃣ Clonar el repositorio
+git clone https://github.com/Monica-Ismelia/gestion-empleados-api_AA5_EV03.git
+cd demo-spring
 
----
+2️⃣ Ejecutar la aplicación
 
-## ⚙️ Configuración y Ejecución
-
-### 1️⃣ Base de Datos MySQL
-
-Crea la base de datos `empresa` y configura `src/main/resources/application.properties`:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/empresa?useSSL=false&allowPublicKeyRetrieval=true
-spring.datasource.username=TU_USUARIO
-spring.datasource.password=TU_CONTRASEÑA
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
-
-server.port=8080
-
-jwt.secret=YWhma2xhaGZrbGFoc2ZrYWhmYXNrZmhhc2tkZmhrYXNoZmFrc2g=
-jwt.expiration=86400000
-```
-
-### 2️⃣ Compilación y Ejecución
-
-```bash
 mvn clean package
 java -jar target/gestion-empleados-1.0-SNAPSHOT.jar
-```
 
-La API estará disponible en: `http://localhost:8080`
+La API estará disponible en:
+http://localhost:8080
 
----
+🌐 Endpoints de la API
 
-## 🔐 Endpoints de Autenticación (Públicos)
+La API está dividida en dos grupos: Autenticación y Gestión de Empleados.
 
-| Endpoint             | Método | Descripción                     |
-| -------------------- | ------ | ------------------------------- |
-| `/api/auth/register` | POST   | Registro de usuario             |
-| `/api/auth/login`    | POST   | Inicio de sesión (devuelve JWT) |
+1️⃣ Autenticación (Pública)
 
-**Ejemplo de Registro:**
+🔵 1. Autenticación (Público)
+| Método   | Endpoint             | Descripción         | Código |
+| -------- | -------------------- | ------------------- | ------ |
+| **POST** | `/api/auth/register` | Registrar usuario   | 201    |
+| **POST** | `/api/auth/login`    | Autenticación + JWT | 200    |
 
-```json
+📥 POST /api/auth/register
+
+Crea un nuevo usuario.
+
+Body (JSON):
 {
-  "nombre": "Mónica Cañas",
-  "correo": "monica@example.com",
-  "contrasena": "SuContraseñaSegura"
+  "nombre": "Juan Pérez",
+  "correo": "juan@example.com",
+  "contrasena": "123456"
 }
-```
-![alt text](image.png)
 
-**Ejemplo de Login:**
+🔐 POST /api/auth/login
 
-```json
+Inicia sesión y genera un token JWT.
+
+Body (JSON):
 {
-  "correo": "monica@example.com",
-  "contrasena": "SuContraseñaSegura"
+  "correo": "juan@example.com",
+  "contrasena": "123456"
 }
-```
 
-**Respuesta Exitosa:**
-
-```json
+Respuesta:
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI..."
 }
-```
-![alt text](image-1.png)
----
+2️⃣ Gestión de Empleados (Protegido – Requiere JWT)
 
-## 💼 Endpoints de Empleados (Protegidos)
+Todos los endpoints requieren enviar el token como encabezado:
+Authorization: Bearer <tu_token_jwt>
 
-Todas las solicitudes deben incluir el Header: `Authorization: Bearer <TOKEN>`
+🟢 2. Empleados (Protegido con JWT)
+| Método     | Endpoint              | Descripción           | Código          |
+| ---------- | --------------------- | --------------------- | --------------- |
+| **GET**    | `/api/empleados`      | Listar todos          | 200             |
+| **GET**    | `/api/empleados/{id}` | Buscar por ID         | 200 / 404       |
+| **POST**   | `/api/empleados`      | Crear empleado        | 201 / 400       |
+| **PUT**    | `/api/empleados/{id}` | Actualización total   | 200 / 400 / 404 |
+| **PATCH**  | `/api/empleados/{id}` | Actualización parcial | 200 / 400 / 404 |
+| **DELETE** | `/api/empleados/{id}` | Eliminar              | 200 / 404       |
 
-| Método | URL                 | Descripción                  | Cuerpo (JSON)                                                                                       |
-| ------ | ------------------- | ---------------------------- | --------------------------------------------------------------------------------------------------- |
-| GET    | /api/empleados      | Lista todos los empleados    | N/A                                                                                                 |
-| GET    | /api/empleados/{id} | Obtiene empleado por ID      | N/A                                                                                                 |
-| POST   | /api/empleados      | Crea nuevo empleado          | `{"nombre": "Ana Pérez", "correo": "ana@ej.com", "salario": 5000000, "fechaIngreso": "2024-01-15"}` |
-| PUT    | /api/empleados/{id} | Actualiza empleado existente | Igual que POST                                                                                      |
-| DELETE | /api/empleados/{id} | Elimina empleado por ID      | N/A                                                                                                 |
+📄 Ejemplos de Respuestas de Error (Manejo Global)
 
----
-
-## 🧠 Notas Clave
-
-* **Seguridad:** Contraseñas encriptadas con `BCryptPasswordEncoder`.
-* **Validación de Correo:** Unicidad en registro y POST/PUT de empleados.
-* **Ciclo de Dependencia:** Resuelto entre `SecurityConfig` y `JwtAuthenticationFilter` usando `@Lazy`.
-
----
-
-## 🧪 Pruebas con Postman
-
-1. Importa la colección de endpoints.
-2. Para rutas protegidas, agrega Header: `Authorization: Bearer <TOKEN>`
-3. Prueba CRUD de empleados.
-
-**Ejemplo de creación de empleado:**
-
-```json
-POST /api/empleados
+Gracias al GlobalExceptionHandler, cualquier error devuelve JSON uniforme:
+❌ 404 – Recurso no encontrado
 {
-  "nombre": "Carlos Gómez",
-  "correo": "carlos@example.com",
-  "salario": 4500000,
-  "fechaIngreso": "2024-02-01"
+  "status": 404,
+  "error": "NOT_FOUND",
+  "message": "Empleado no encontrado",
+  "timestamp": "2025-01-01T10:15:30"
 }
-```
-
-**Respuesta:**
-
-```json
+❌ 403 – No autorizado
 {
-  "id": 1,
-  "nombre": "Carlos Gómez",
-  "correo": "carlos@example.com",
-  "salario": 4500000,
-  "fechaIngreso": "2024-02-01"
+  "status": 403,
+  "error": "No autorizado",
+  "message": "No tiene permisos para acceder a este recurso",
+  "timestamp": "2025-01-01T10:15:30"
 }
-```
+❌ 400 – Datos inválidos
+{
+  "status": 400,
+  "error": "BAD_REQUEST",
+  "message": "El correo ya está registrado",
+  "timestamp": "2025-01-01T10:15:30"
+}
+🧪 Documentación Interactiva (Swagger UI)
 
----
+Una vez ejecutada la aplicación, visita:
+👉 http://localhost:8080/swagger-ui/index.html
 
-## 📚 Referencias
+Desde Swagger puedes:
 
-* [Spring Boot Docs](https://docs.spring.io/spring-boot/docs/current/reference/html/)
-* [Spring Security JWT](https://www.baeldung.com/spring-security-oauth-jwt)
-* [MySQL Docs](https://dev.mysql.com/doc/)
+✔ Probar tus endpoints
+✔ Autenticarse con JWT
+✔ Ver modelos (schemas)
+✔ Ver ejemplos de errores
 
----
+🔑 Cómo Usar el Token JWT en Swagger
 
-### 👩‍🎓 Información del Aprendiz
+1. Ingresa al endpoint POST /api/auth/login
+2. Copia el campo "token"
+3. En Swagger, haz clic en Authorize
+4. Ingresa
+Bearer tuTokenAqui
+5. Ahora puedes usar todos los endpoints protegidos.
 
-**Nombre:** Mónica Ismelia Cañas Reyes
+📦 Estructura del Proyecto
+src/main/java/com/example/demo_spring/
+ ├── auth/          → Controladores de login/register
+ ├── config/        → Seguridad y excepciones globales
+ ├── controller/    → Controladores REST
+ ├── model/         → Entidades JPA
+ ├── repository/    → Interfaces JPA
+ └── service/       → Lógica de negocio
+
+📝 Notas Importantes
+
+✔ Cuenta con manejo global de errores
+✔ Swagger muestra ejemplos JSON para cada código
+✔ Los endpoints protegidos requieren Bearer Token
+✔ Gestión completa de empleados mediante CRUD
+
+👩‍💻 Autor
+
+**Aprendiz:** Mónica Ismelia Cañas Reyes
 **Programa:** Tecnólogo en Análisis y Desarrollo de Software
-**Institución:** Servicio Nacional de Aprendizaje – SENA
+**Institución:** Servicio Nacional de Aprendizaje – SENA 🟩
 **Centro:** Centro Nacional de Asistencia Técnica a la Industria – ASTIN
 **Evidencia:** GA7-220501096-AA5-EV03
 **Fecha:** Diciembre de 2025

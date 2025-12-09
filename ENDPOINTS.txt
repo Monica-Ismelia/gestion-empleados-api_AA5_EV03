@@ -8,5 +8,6 @@ POST /api/auth/login
 GET    /api/empleados
 GET    /api/empleados/{id}
 POST   /api/empleados
-PUT    /api/empleados/{id}
+PUT    /api/empleados
+PATCH  /api/empleados/{id}
 DELETE /api/empleados/{id}
